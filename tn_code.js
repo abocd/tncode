@@ -1,13 +1,12 @@
-/*! tncode 1.2 author:weiyingbin email:277612909@qq.com
-//@ object webiste: http://www.39gs.com/archive/259.html
+/*! tncode 1.2
 //@ https://github.com/binwind8/tncode
 */
 if(!document.getElementByClassName){
     function hasClass(elem, cls) {
-      cls = cls || '';
-      if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
-      var ret = new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
-      return ret;
+        cls = cls || '';
+        if (cls.replace(/\s/g, '').length == 0) return false; //当cls没有参数时，返回false
+        var ret = new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
+        return ret;
     }
     document.getElementByClassName = function(className,index){
         var nodes=document.getElementsByTagName("*");//获取页面里所有元素，因为他会匹配全页面元素，所以性能上有缺陷，但是可以约束他的搜索范围；
@@ -19,14 +18,14 @@ if(!document.getElementByClassName){
         return index==-1?arr:arr[index];
     };
     function addClass( elements,cName ){
-       if( !hasClass( elements,cName ) ){
-          elements.className += " " + cName;
-       };
+        if( !hasClass( elements,cName ) ){
+            elements.className += " " + cName;
+        };
     }
     function removeClass( elements,cName ){
-       if( hasClass( elements,cName ) ){
-          elements.className = elements.className.replace( new RegExp( "(\\s|^)" + cName + "(\\s|$)" )," " ); // replace方法是替换
-       };
+        if( hasClass( elements,cName ) ){
+            elements.className = elements.className.replace( new RegExp( "(\\s|^)" + cName + "(\\s|$)" )," " ); // replace方法是替换
+        };
     }
 }
 
@@ -36,7 +35,7 @@ function appendHTML(o,html) {
     divTemp.innerHTML = html;
     nodes = divTemp.childNodes;
     for (var i=0, length=nodes.length; i<length; i+=1) {
-       fragment.appendChild(nodes[i].cloneNode(true));
+        fragment.appendChild(nodes[i].cloneNode(true));
     }
     o.appendChild(fragment);
     nodes = null;
@@ -64,12 +63,12 @@ _ajax.prototype = {
     },
     createXhrObject: function() {
         var methods = [
-            function() { return new XMLHttpRequest(); },
-            function() { return new ActiveXObject("Msxml2.XMLHTTP"); },
-            function() { return new ActiveXObject("Microsoft.XMLHTTP"); }
-        ],
-        i = 0,
-        len = methods.length,obj;
+                function() { return new XMLHttpRequest(); },
+                function() { return new ActiveXObject("Msxml2.XMLHTTP"); },
+                function() { return new ActiveXObject("Microsoft.XMLHTTP"); }
+            ],
+            i = 0,
+            len = methods.length,obj;
         for (; i < len; i++) {
             try {
                 methods[i];
@@ -83,13 +82,15 @@ _ajax.prototype = {
     },
     JSONStringify: function(obj) {
         return JSON.stringify(obj).replace(/"|{|}/g, "")
-                    .replace(/b:b/g, "=")
-                    .replace(/b,b/g, "&");
+            .replace(/b:b/g, "=")
+            .replace(/b,b/g, "&");
     }
 };
 
 
 var tncode = {
+    tncodeUrl:'',
+    checkUrl:'',
     _obj:null,
     _tncode:null,
     _img:null,
@@ -147,7 +148,7 @@ var tncode = {
         }
         tncode._is_moving = true;
         console.log("_block_on_move");
-                //document.getElementById('msg').innerHTML = "move:"+theEvent.clientX+";"+theEvent.clientY;
+        //document.getElementById('msg').innerHTML = "move:"+theEvent.clientX+";"+theEvent.clientY;
         var offset = theEvent.clientX - tncode._block_start_x;
         if(offset<0){
             offset = 0;
@@ -178,7 +179,7 @@ var tncode = {
         var haddle = {success:tncode._send_result_success,failure:tncode._send_result_failure};
         tncode._result = false;
         var re = new _ajax();
-        re.request('get',tncode._currentUrl()+'check.php?tn_r='+tncode._mark_offset,haddle);
+        re.request('get',tncode.checkUrl +'&tn_r='+tncode._mark_offset,haddle);
     },
     _send_result_success:function(responseText,responseXML){
         tncode._doing = false;
@@ -192,6 +193,7 @@ var tncode = {
                 tncode._onsuccess();
             }
         }else{
+            tncode._tncode.innerHTML = 'X验证失败';
             var obj = document.getElementById('tncode_div');
             addClass( obj,'dd');
             setTimeout(function(){
@@ -200,8 +202,10 @@ var tncode = {
             tncode._result = false;
             tncode._showmsg('验证失败');
             tncode._err_c++;
-            if(tncode._err_c>5){
-                tncode.refresh();
+            if(true  || tncode._err_c>5){
+                setTimeout(function(){
+                    tncode.refresh();
+                },1000);
             }
         }
     },
@@ -229,29 +233,29 @@ var tncode = {
         ctx_mark.clearRect(0,0,canvas_mark.width,canvas_mark.height);
         ctx_mark.drawImage(tncode._img, 0, tncode._img_h, tncode._mark_w,tncode._img_h,tncode._mark_offset,0,tncode._mark_w, tncode._img_h);
         var imageData = ctx_mark.getImageData(0, 0, tncode._img_w, tncode._img_h);
-          // 获取画布的像素信息
-          // 是一个一维数组，包含以 RGBA 顺序的数据，数据使用  0 至 255（包含）的整数表示
-          // 如：图片由两个像素构成，一个像素是白色，一个像素是黑色，那么 data 为
-          // [255,255,255,255,0,0,0,255]
-          // 这个一维数组可以看成是两个像素中RBGA通道的数组的集合即:
-          // [R,G,B,A].concat([R,G,B,A])
+        // 获取画布的像素信息
+        // 是一个一维数组，包含以 RGBA 顺序的数据，数据使用  0 至 255（包含）的整数表示
+        // 如：图片由两个像素构成，一个像素是白色，一个像素是黑色，那么 data 为
+        // [255,255,255,255,0,0,0,255]
+        // 这个一维数组可以看成是两个像素中RBGA通道的数组的集合即:
+        // [R,G,B,A].concat([R,G,B,A])
         var data = imageData.data;
         //alert(data.length/4);
         var x = tncode._img_h,y=tncode._img_w;
         for(var j = 0; j < x; j++) {
             var ii = 1,k1=-1;
             for(var k=0;k<y&&k>=0&&k>k1;){
-              // 得到 RGBA 通道的值
+                // 得到 RGBA 通道的值
                 var i = (j*y+k)*4;
                 k+=ii;
                 var r = data[i]
-                  , g = data[i+1]
-                  , b = data[i+2];
+                    , g = data[i+1]
+                    , b = data[i+2];
                 // 我们从最下面那张颜色生成器中可以看到在图片的右上角区域，有一小块在
                 // 肉眼的观察下基本都是白色的，所以我在这里把 RGB 值都在 245 以上的
                 // 的定义为白色
                 // 大家也可以自己定义的更精确，或者更宽泛一些
-                if(r+g+b<200) data[i+3] = 0;
+                if((r+g+b)<200) data[i+3] = 0;
                 else{
                     var arr_pix = [1,-5];
                     var arr_op = [250,0];
@@ -356,7 +360,7 @@ var tncode = {
     _html:function(){
         var d = document.getElementById('tncode_div_bg');
         if(d)return;
-        var html = '<div class="tncode_div_bg" id="tncode_div_bg"></div><div class="tncode_div" id="tncode_div"><div class="loading">加载中</div><canvas class="tncode_canvas_bg"></canvas><canvas class="tncode_canvas_mark"></canvas><div class="hgroup"></div><div class="tncode_msg_error"></div><div class="tncode_msg_ok"></div><div class="slide"><div class="slide_block"></div><div class="slide_block_text">拖动左边滑块完成上方拼图</div></div><div class="tools"><div class="tncode_close"></div><div class="tncode_refresh"></div><div class="tncode_tips"><a href="http:\/\/www.39gs.com/archive/259.html" target=_blank>39gs.com</a></div></div></div>';
+        var html = '<div class="tncode_div_bg" id="tncode_div_bg"></div><div class="tncode_div" id="tncode_div"><div class="loading">加载中</div><canvas class="tncode_canvas_bg"></canvas><canvas class="tncode_canvas_mark"></canvas><div class="hgroup"></div><div class="tncode_msg_error"></div><div class="tncode_msg_ok"></div><div class="slide"><div class="slide_block"></div><div class="slide_block_text">拖动左边滑块完成上方拼图</div></div><div class="tools"><div class="tncode_close"></div><a href="#" class="tncode_refresh"></a><div class="tncode_tips"><a href="http:\/\/www.phpec.org/" target=_blank>yz</a></div></div></div>';
         var bo = document.getElementsByTagName('body');
         appendHTML(bo[0],html);
     },
@@ -372,6 +376,7 @@ var tncode = {
     },
     refresh:function(){
         var isSupportWebp = !![].map && document.createElement('canvas').toDataURL('image/webp').indexOf('data:image/webp') == 0;
+        //alert(isSupportWebp)
         var _this = this;
         tncode._err_c = 0;
         tncode._is_draw_bg = false;
@@ -382,7 +387,7 @@ var tncode = {
         obj = document.getElementByClassName('tncode_canvas_mark');
         obj.style.display="none";
         tncode._img = new Image();
-        var img_url = tncode._currentUrl()+"tncode.php?t="+Math.random();
+        var img_url = tncode.tncodeUrl+"&t="+Math.random();
         if(!isSupportWebp){//浏览器不支持webp
             img_url+="&nowebp=1";
         }
@@ -440,8 +445,10 @@ var tncode = {
     result:function(){
         return tncode._result;
     },
-    onsuccess:function(fn){
+    onsuccess:function(fn,opt){
         tncode._onsuccess = fn;
+        tncode.tncodeUrl = opt.tncodeUrl;
+        tncode.checkUrl = opt.checkUrl;
     }
 };
 var $TN = tncode;
